@@ -7,7 +7,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 800m
+          memory: 900m
     networks:
       - piyushrawat147 # Connect this service to the custom 'piyushrawat147' network
   loans:
