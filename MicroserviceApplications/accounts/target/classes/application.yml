@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: "accounts"
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -15,19 +17,17 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-  config:
-    import:
-      - "application_qa.yml"
-      - "application_prod.yml"
   profiles:
     active:
       "qa"
+  config:
+    import: "configserver:http://localhost:8071"
 
 build:
   version: "1.0"
 
 accounts:
-  message: "this is the config file for accounts"
+  message: "This is the contact file for dev accounts env"
   info:
     name: "Piyush Rawat"
     email: "piyushkumar9818@gmail.com"
