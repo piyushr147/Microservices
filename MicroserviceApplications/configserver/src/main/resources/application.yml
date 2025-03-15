@@ -1,0 +1,16 @@
+server:
+  port:
+    8071
+
+spring:
+  application:
+    name: "confirserver"
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-location: "classpath:/config"
+
+

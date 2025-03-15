@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: "qa"
+
+build:
+  version: "2.0"
+
+loans:
+  message: "This is the contact file for QA loans env"
+  info:
+    name: "Keshav - QA lead"
+    email: "keshavbajaj@gmail.com"
+  contact:
+    +919873554224

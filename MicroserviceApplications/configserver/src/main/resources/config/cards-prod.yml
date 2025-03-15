@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: "3.0"
+
+cards:
+  message: "This is the contact file for Prod cards env"
+  info:
+    name: "Sachin Rawat"
+    email: "rawatsachin@gmail.com"
+  contact:
+    +917982132194
