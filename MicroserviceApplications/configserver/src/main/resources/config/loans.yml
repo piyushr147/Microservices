@@ -1,0 +1,11 @@
+build:
+  version: "1.0"
+
+loans:
+  message: "This is the contact file for dev accounts env"
+  info:
+    name: "Piyush Rawat"
+    email: "piyushkumar9818@gmail.com"
+  contact:
+    +917982031328
+    +919650745365
