@@ -4,7 +4,7 @@ server:
 
 spring:
   application:
-    name: "confirserver"
+    name: "configserver"
   profiles:
     #active: native
     active: git
@@ -19,5 +19,16 @@ spring:
           timeout: 5
           clone-on-start: true #clone the git branch on startup of config server
           force-pull: true #take changes form remote branch by pulling and not from local.
+  rabbitmq:
+    host: localhost
+    port: 5672
+    stream:
+      username: guest
+      password: guest
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
