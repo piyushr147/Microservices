@@ -6,11 +6,18 @@ spring:
   application:
     name: "confirserver"
   profiles:
-    active: native
+    #active: native
+    active: git
   cloud:
     config:
       server:
-        native:
-          search-location: "classpath:/config"
+        #native:
+          #search-location: "classpath:/config"
+        git:
+          uri: "https://github.com/piyushr147/config.git"
+          default-label: main #branch to look properties from
+          timeout: 5
+          clone-on-start: true #clone the git branch on startup of config server
+          force-pull: true #take changes form remote branch by pulling and not from local.
 
 

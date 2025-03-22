@@ -21,6 +21,15 @@ spring:
       - "qa"
   config:
     import: "configserver:http://localhost:8071/"
+  cloud:
+    bus:
+      ack:
+        enabled: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 build:
   version: "1.0"
@@ -33,3 +42,9 @@ cards:
   contact:
     +917982031328
     +919650745365
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
