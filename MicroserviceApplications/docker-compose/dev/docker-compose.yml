@@ -1,93 +1,67 @@
 services:
   rabbit:
-    image: rabbitmq:3.13-management
-    hostname: rabbitmq
+    image: rabbitmq:3.13-management  # Use the RabbitMQ image with the management UI
+    hostname: rabbitmq  # Set the RabbitMQ hostname
     ports:
-      - "5672:5672" #Exposes port 5672 (RabbitMQ message broker).
-      - "15672:15672"`#Exposes port 15672 (RabbitMQ management UI).
+      - "5672:5672"  # Map host port 5672 to container port 5672 (used by applications to send/receive messages)
+      - "15672:15672"  # Map host port 15672 to container port 15672 (used for RabbitMQ management UI access)
     healthcheck:
       test: rabbitmq-diagnostics check_port_connectivity  #Checks if RabbitMQ ports are accessible.
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 5s
+    extends:
+      file: common-config.yml
+      service: network-deploy-config
+
   configserver:
     image: "piyushrawat147/configserver:v2"
     container_name: configserver-ms
     ports:
-      - 8071:8080
-    deploy:
-      resources:
-        limits:
-          memory: 900m
+      - "8071:8071"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
     healthcheck:
-      test: "curl --fail --silent localhost:8071/actuator/health | grep 'UP' || exit" #Calls the Spring Boot Actuator health endpoint.
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit" #Calls the Spring Boot Actuator health endpoint.
       start_interval: 10s
       timeout: 5s
       interval: 10s
       retries: 10
-    depends_on:
-      rabbit:
-        condition: service_healthy
-    networks:
-      - piyushrawat147 # Connect this service to the custom 'piyushrawat147' network
+    extends:
+      file: common-config.yml
+      service: microservices-base-config
 
   accounts:
     image: "piyushrawat147/accounts:v2"
     container_name: accounts-ms
     ports:
-      - 8080:8080
-    deploy:
-      resources:
-        limits:
-          memory: 900m
-    depends_on:
-      configserver:
-        condition: service_healthy
-    networks:
-      - piyushrawat147 # Connect this service to the custom 'piyushrawat147' network
+      - "8080:8080"  # Map host port 8080 to container port 8080 (used by Spring Boot applications to fetch configurations)
     environment:
-      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      SPRING_PROFILES_ACTIVE: "prod"
       SPRING_APPLICATION_NAME: "accounts"
+    extends:
+      file: common-config.yml
+      service: microservices-configserver-config
 
   cards:
     image: "piyushrawat147/cards:v2"
     container_name: cards-ms
     ports:
-      - 8081:8080
-    deploy:
-      resources:
-        limits:
-          memory: 800m
-    depends_on:
-      configserver:
-        condition: service_healthy
-    networks:
-      - piyushrawat147 # Connect this service to the custom 'piyushrawat147' network
+      - "8081:8081"  # Map host port 8081 to container port 8081 (used by Spring Boot applications to fetch configurations)
     environment:
-      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      SPRING_PROFILES_ACTIVE: "prod"
       SPRING_APPLICATION_NAME: "cards"
+    extends:
+      file: common-config.yml
+      service: microservices-configserver-config
 
   loans:
     image: "piyushrawat147/loans:v2"
     container_name: loans-ms
     ports:
-      - 8082:8080
-    deploy:
-      resources:
-        limits:
-          memory: 800m
-    depends_on:
-      configserver:
-        condition: service_healthy
-    networks:
-      - piyushrawat147 # Connect this service to the custom 'piyushrawat147' network
+      - "8082:8082"  # Map host port 8082 to container port 8082 (used by Spring Boot applications to fetch configurations)
     environment:
-      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
-      SPRING_PROFILES_ACTIVE: "prod"
       SPRING_APPLICATION_NAME: "loans"
+    extends:
+      file: common-config.yml
+      service: microservices-configserver-config
 
 networks:
   piyushrawat147:

@@ -1,0 +1,27 @@
+services:
+  # Base network configuration for all microservices
+  network-deploy-config:
+    networks:
+      - piyushrawat147  # Connect this service to the custom 'piyushrawat147' network
+
+  # Base configuration for microservices, extending the network setup
+  microservices-base-config:
+    extends:
+      service: network-deploy-config  # Inherit network settings from 'network-deploy-config'
+    deploy:
+      resources:
+        limits:
+          memory: 1000m # Limit the container memory usage to 800MB
+    environment:
+      SPRING_RABBITMQ_HOST: "rabbit"
+
+  # Configuration for the Config Server, extending base microservice settings
+  microservices-configserver-config:
+    extends:
+      service: microservices-base-config  # Inherit base settings (network + memory limits)
+    depends_on:
+      configserver:
+        condition: service_healthy  # Ensure 'configserver' starts only when it is healthy
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/  # Use the Config Server for centralized configuration
+      SPRING_PROFILES_ACTIVE: qa  # Set the active Spring Boot profile to 'dev'
