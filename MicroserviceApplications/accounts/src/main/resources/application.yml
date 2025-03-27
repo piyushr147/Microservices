@@ -21,11 +21,11 @@ spring:
     active:
       "qa"
   config:
-    import: "configserver:http://localhost:8071/"
+    import: "optional:configserver:http://localhost:8071/" #This is the port where config server is running locally.
   cloud:
     bus:
-      enabled: true
-  rabbitmq:
+      enabled: true #Allow application to propagate configuration changes and events across distributed microservices using a message broker like RabbitMQ or Kafka
+  rabbitmq: #This configures Spring Boot to connect to a RabbitMQ broker running on localhost (port 5672) using the default guest/guest credentials.
     host: localhost
     port: 5672
     username: guest

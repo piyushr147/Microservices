@@ -6,29 +6,37 @@ spring:
   application:
     name: "configserver"
   profiles:
-    #active: native
-    active: git
+    #active: native #Uses local file-based storage (for testing or development).
+    active: git #Uses a Git-based configuration store (recommended for production).
   cloud:
     config:
       server:
         #native:
-          #search-location: "classpath:/config"
-        git:
+          #search-location: "classpath:/config" #refers to the *.yml files mentioned in this repo.
+        git: #will read the properties file for each microservice from git
           uri: "https://github.com/piyushr147/config.git"
           default-label: main #branch to look properties from
           timeout: 5
           clone-on-start: true #clone the git branch on startup of config server
           force-pull: true #take changes form remote branch by pulling and not from local.
-  rabbitmq:
+  rabbitmq: #This configures Spring Boot to connect to a RabbitMQ broker running on localhost (port 5672) using the default guest/guest credentials.
     host: localhost
     port: 5672
     stream:
       username: guest
       password: guest
 
-management:
+management: #This enables and exposes all Spring Boot Actuator endpoints over HTTP.
   endpoints:
     web:
       exposure:
         include: "*"
-
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health: #will initialize /health/* endpoints to check the liveness and readiness of this application.
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

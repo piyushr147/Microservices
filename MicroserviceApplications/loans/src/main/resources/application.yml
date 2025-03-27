@@ -1,5 +1,6 @@
 server:
-  port: 8090
+  port: 8082
+
 spring:
   application:
     name: "loans"
@@ -20,11 +21,11 @@ spring:
     active:
       - "qa"
   config:
-    import: "optional:configserver:http://localhost:8071/"
+    import: "optional:configserver:http://localhost:8071/" #This is the port where config server is running locally.
   cloud:
     bus:
-      enabled: true
-  rabbitmq:
+      enabled: true #Allow application to propagate configuration changes and events across distributed microservices using a message broker like RabbitMQ or Kafka
+  rabbitmq: #This configures Spring Boot to connect to a RabbitMQ broker running on localhost (port 5672) using the default guest/guest credentials.
     host: localhost
     port: 5672
     username: guest
@@ -42,7 +43,7 @@ loans:
     +917982031328
     +919650745365
 
-management:
+management:  #This enables and exposes all Spring Boot Actuator endpoints over HTTP.
   endpoints:
     web:
       exposure:
