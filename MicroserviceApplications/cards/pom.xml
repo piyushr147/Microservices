@@ -95,8 +95,17 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
@@ -104,11 +113,12 @@
                 <version>3.3.2</version> <!-- Make sure to use the latest version -->
                 <configuration>
                     <to>
-                        <image>${project.artifactId}:v1</image> <!-- Specify your image name -->
+                        <image>piyushrawat147/${project.artifactId}:v3</image> <!-- Specify your image name -->
                     </to>
                     <from>
                         <image>openjdk:21-jdk-slim</image> <!-- Use Java 21 base image -->
                     </from>
+                    <allowInsecureRegistries>true</allowInsecureRegistries>
                 </configuration>
             </plugin>
         </plugins>
