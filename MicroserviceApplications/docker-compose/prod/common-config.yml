@@ -24,4 +24,4 @@ services:
         condition: service_healthy  # Ensure 'configserver' starts only when it is healthy
     environment:
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/  # Use the Config Server for centralized configuration
-      SPRING_PROFILES_ACTIVE: dev  # Set the active Spring Boot profile to 'dev'
+      SPRING_PROFILES_ACTIVE: prod  # Set the active Spring Boot profile to 'dev'
