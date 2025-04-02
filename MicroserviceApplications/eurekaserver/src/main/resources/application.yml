@@ -1,21 +1,21 @@
 spring:
   application:
     name: eurekaserver
-  config:
+  config: #fetch properties form git also.
     import: "optional:configserver:http://localhost:8071/"
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: "*"  # Exposes all Actuator endpoints via HTTP.
+  health: # Will initialize /health/* endpoints to check the liveness and readiness of this application.
+    livenessstate:
+      enabled: true  # Enables the "/actuator/health/liveness" endpoint to check if the app is alive.
+    readinessstate:
+      enabled: true  # Enables the "/actuator/health/readiness" endpoint to check if the app is ready to receive traffic.
   endpoint:
     health:
       probes:
-        enabled: true
-  health:
-    readinessstate:
-      enabled: true
-    livenessstate:
-      enabled: true
+        enabled: true  # Enables Kubernetes-style liveness & readiness probes.
 

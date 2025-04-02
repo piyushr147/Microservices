@@ -31,12 +31,12 @@ management: #This enables and exposes all Spring Boot Actuator endpoints over HT
     web:
       exposure:
         include: "*"
+  health: # Will initialize /health/* endpoints to check the liveness and readiness of this application.
+    livenessstate:
+      enabled: true  # Enables the "/actuator/health/liveness" endpoint to check if the app is alive.
+    readinessstate:
+      enabled: true  # Enables the "/actuator/health/readiness" endpoint to check if the app is ready to receive traffic.
   endpoint:
     health:
       probes:
-        enabled: true
-  health: #will initialize /health/* endpoints to check the liveness and readiness of this application.
-    livenessstate:
-      enabled: true
-    readinessstate:
-      enabled: true
+        enabled: true  # Enables Kubernetes-style liveness & readiness probes.
