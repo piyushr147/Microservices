@@ -5,17 +5,28 @@ spring:
   application:
     name: "loans"
   datasource:
-    url: jdbc:mysql://localhost:3308/loansdb
-    username: root
-    password: root
+    #url: jdbc:mysql://localhost:3306/accountsdb # These are config details for mysql
+    #username: root
+    #password: root
+    url: jdbc:h2:mem:testdb  # In-memory database (data is lost on restart)
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true  # Enable H2 web console
+      path: /h2-console  # Default path for H2 console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update  # Auto-create tables
+    show-sql: true
   sql:
     init:
       mode: always
-  jpa:
-    show-sql: true
   profiles:
     active:
-      - "qa"
+      "qa"
   config:
     import: "optional:configserver:http://localhost:8071/" #This is the port where config server is running locally.
   cloud:
@@ -30,7 +41,7 @@ spring:
 build:
   version: "1.0"
 
-loans:
+accounts:
   message: "This is the contact file for dev accounts env"
   info:
     name: "Piyush Rawat"
@@ -39,8 +50,29 @@ loans:
     +917982031328
     +919650745365
 
-management:  #This enables and exposes all Spring Boot Actuator endpoints over HTTP.
+management:
   endpoints:
     web:
       exposure:
         include: "*"
+  endpoint:
+    shutdown:
+      access: unrestricted
+  info:
+    env:
+      enabled: true
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+info:
+  app:
+    name: "loans"
+    description: "Loans Application"
+    version: "1.0.0"
