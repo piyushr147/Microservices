@@ -35,6 +35,10 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
         <dependency>
@@ -57,6 +61,11 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -113,7 +122,7 @@
                 <version>3.3.2</version> <!-- Make sure to use the latest version -->
                 <configuration>
                     <to>
-                        <image>piyushrawat147/${project.artifactId}:v3</image> <!-- Specify your image name -->
+                        <image>piyushrawat147/${project.artifactId}:v5</image> <!-- Specify your image name -->
                     </to>
                     <from>
                         <image>openjdk:21-jdk-slim</image> <!-- Use Java 21 base image -->
