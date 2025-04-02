@@ -20,10 +20,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: "*" # Exposes all Actuator endpoints via HTTP.
   endpoint:
     gateway:
-      access: unrestricted
+      access: unrestricted  # Allows unrestricted access to the /actuator/gateway endpoint
   info:
     env:
       enabled: true
