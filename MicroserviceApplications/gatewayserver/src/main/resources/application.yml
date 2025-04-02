@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: "gatewayserver"  # Defines the application name as 'gatewayserver'
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+    # This tells the application to fetch configuration from the Config Server running at http://localhost:8071/
+    # The 'optional:' prefix means that if the Config Server is unavailable, the application will still start.
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false #making it false for now, because i have added programmatic approach to handle routes dynamically
+          # Enables automatic service discovery using Spring Cloud Gateway
+          # This allows dynamic routing of API requests to registered services in Eureka
+          lower-case-service-id: true
+          #Microservices will be identified with lowercase name, no need for mandatory upper case names
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      access: unrestricted
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: "gatewayserver"
+    description: "Edge server or API gateway Application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+    springBoot:
+      gatewayserver: DEBUG
