@@ -4,6 +4,19 @@ services:
     networks:
       - piyushrawat147  # Connect this service to the custom 'piyushrawat147' network
 
+  microservices-db-config:
+    extends:
+      service: network-deploy-config
+    image: mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+      start_period: 10s
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
   # Base configuration for microservices, extending the network setup
   microservices-base-config:
     extends:
@@ -19,9 +32,14 @@ services:
   microservices-configserver-config:
     extends:
       service: microservices-base-config  # Inherit base settings (network + memory limits)
-    depends_on:
-      configserver:
-        condition: service_healthy  # Ensure 'configserver' starts only when it is healthy
     environment:
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/  # Use the Config Server for centralized configuration
       SPRING_PROFILES_ACTIVE: dev  # Set the active Spring Boot profile to 'dev'
+      #SPRING_DATASOURCE_USERNAME: root
+      #SPRING_DATASOURCE_PASSWORD: root
+
+  microservices-eureka-config:
+    extends:
+      service: microservices-configserver-config
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
