@@ -77,7 +77,7 @@
 				<version>3.3.2</version> <!-- Make sure to use the latest version -->
 				<configuration>
 					<to>
-						<image>piyushrawat147/${project.artifactId}:v5</image> <!-- Specify your image name -->
+						<image>piyushrawat147/${project.artifactId}:v6</image> <!-- Specify your image name -->
 					</to>
 					<from>
 						<image>openjdk:21-jdk-slim</image> <!-- Use Java 21 base image -->
