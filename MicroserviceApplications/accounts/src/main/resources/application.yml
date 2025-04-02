@@ -54,25 +54,40 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: "*"  # Exposes all Actuator endpoints via HTTP.
+  health: # Will initialize /health/* endpoints to check the liveness and readiness of this application.
+    livenessstate:
+      enabled: true  # Enables the "/actuator/health/liveness" endpoint to check if the app is alive.
+    readinessstate:
+      enabled: true  # Enables the "/actuator/health/readiness" endpoint to check if the app is ready to receive traffic.
   endpoint:
     shutdown:
-      access: unrestricted
+      access: unrestricted  # Allows triggering application shutdown via "/actuator/shutdown" without restrictions.
+    health:
+      probes:
+        enabled: true  # Enables Kubernetes-style liveness & readiness probes.
+
   info:
     env:
       enabled: true
 
 eureka:
   instance:
-    preferIpAddress: true
+    preferIpAddress: true  # Registers the service using its IP address instead of hostname.
   client:
-    fetchRegistry: true
-    registerWithEureka: true
+    fetchRegistry: true  # Enables this service to fetch the registry from Eureka Server.
+    registerWithEureka: true  # Allows this service to register itself with Eureka.
     serviceUrl:
-      defaultZone: http://localhost:8070/eureka/
+      defaultZone: http://localhost:8070/eureka/  # The Eureka Server URL where this service will register.
 
 info:
   app:
     name: "accounts"
     description: "Accounts Application"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      eazybytes:
+        accounts: DEBUG
