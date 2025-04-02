@@ -4,6 +4,8 @@ import com.eazybytes.accounts.dto.CustomerDetailsDto;
 import com.eazybytes.accounts.service.ICustomerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class CustomerController {
 
+    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
     private final ICustomerService iCustomerService;
 
     public CustomerController(ICustomerService iCustomerService) {
@@ -26,9 +29,10 @@ public class CustomerController {
     }
 
     @GetMapping("/fetchCustomerDetails")
-    public ResponseEntity<CustomerDetailsDto> fetchCustomerDetails(@RequestParam
-                                                                       @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
+    public ResponseEntity<CustomerDetailsDto> fetchCustomerDetails(@RequestHeader("correlation-id") String correlationId,
+                                                                   @RequestParam @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile number must be 10 digits")
                                                                        String mobileNumber) {
-        return new ResponseEntity<>(iCustomerService.fetchCustomerDetails(mobileNumber), HttpStatus.OK);
+        logger.debug("Fetching customer details for customer with correlation-id {}", correlationId);
+        return new ResponseEntity<>(iCustomerService.fetchCustomerDetails(correlationId,mobileNumber), HttpStatus.OK);
     }
 }
