@@ -1,4 +1,35 @@
 services:
+  #This is config for adding mysql db but for now im using H2.
+  # accountsdb:
+  #   container_name: accountsdb
+  #   ports:
+  #     - "3306:3306"
+  #   environment:
+  #     MYSQL_DATABASE: dbaccounts
+  #   extends:
+  #     file: common-config.yml
+  #     service: microservices-db-config
+
+  # cardsdb:
+  #   container_name: cardsdb
+  #   ports:
+  #     - "3307:3306"
+  #   environment:
+  #     MYSQL_DATABASE: dbcards
+  #   extends:
+  #     file: common-config.yml
+  #     service: microservices-db-config
+
+  # loansdb:
+  #   container_name: loansdb
+  #   ports:
+  #     - "3308:3306"
+  #   environment:
+  #     MYSQL_DATABASE: dbloans
+  #   extends:
+  #     file: common-config.yml
+  #     service: microservices-db-config
+
   rabbit:
     image: rabbitmq:3.13-management  # Use the RabbitMQ image with the management UI
     hostname: rabbitmq  # Set the RabbitMQ hostname
@@ -16,7 +47,7 @@ services:
       service: network-deploy-config
 
   configserver:
-    image: "piyushrawat147/configserver:v3"
+    image: "piyushrawat147/configserver:v5"
     container_name: configserver-ms
     ports:
       - "8071:8071"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
@@ -30,47 +61,82 @@ services:
       file: common-config.yml
       service: microservices-base-config
 
+  eurekaserver:
+    image: "piyushrawat147/eurekaserver:v5"
+    container_name: eurekaserver-ms
+    ports:
+      - "8070:8070"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8070/actuator/health" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    depends_on:
+      configserver:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservices-configserver-config
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"
+
   accounts:
-    image: "piyushrawat147/accounts:v3"
+    image: "piyushrawat147/accounts:v5"
     container_name: accounts-ms
     ports:
       - "8080:8080"  # Map host port 8080 to container port 8080 (used by Spring Boot applications to fetch configurations)
     environment:
       SPRING_APPLICATION_NAME: "accounts"
+      #SPRING_DATASOURCE_URL: jdbc:mysql://accountsdb:3306/dbaccounts
     depends_on:
       configserver:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      #accountsdb:
+        #condition: service_healthy
     extends:
       file: common-config.yml
-      service: microservices-configserver-config
+      service: microservices-eureka-config
 
   cards:
-    image: "piyushrawat147/cards:v3"
+    image: "piyushrawat147/cards:v5"
     container_name: cards-ms
     ports:
       - "8081:8081"  # Map host port 8081 to container port 8081 (used by Spring Boot applications to fetch configurations)
     environment:
       SPRING_APPLICATION_NAME: "cards"
+      #SPRING_DATASOURCE_URL: jdbc:mysql://cardsdb:3306/dbcards
     depends_on:
       configserver:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      #cardsdb:
+        #condition: service_healthy
     extends:
       file: common-config.yml
-      service: microservices-configserver-config
+      service: microservices-eureka-config
 
   loans:
-    image: "piyushrawat147/loans:v3"
+    image: "piyushrawat147/loans:v5"
     container_name: loans-ms
     ports:
       - "8082:8082"  # Map host port 8082 to container port 8082 (used by Spring Boot applications to fetch configurations)
     environment:
       SPRING_APPLICATION_NAME: "loans"
+      #SPRING_DATASOURCE_URL: jdbc:mysql://loansdb:3306/dbloans
     depends_on:
       configserver:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      #loansdb:
+        #condition: service_healthy
     extends:
       file: common-config.yml
-      service: microservices-configserver-config
+      service: microservices-eureka-config
 
 networks:
   piyushrawat147:
