@@ -20,6 +20,9 @@ public class GatewayserverApplication {
 						.path("/banking/accounts/**")
 						.filters(filter ->
 								filter.rewritePath("banking/accounts/?(?<remaining>.*)","/${remaining}")
+										.circuitBreaker(config -> config.setName("accountsCircuitBreaker")
+												.setFallbackUri("forward:/contactSupport")
+										)
 						)
 						.uri("lb://ACCOUNTS")
 				)
