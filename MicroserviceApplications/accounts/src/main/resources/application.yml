@@ -32,6 +32,9 @@ spring:
   cloud:
     bus:
       enabled: true #Allow application to propagate configuration changes and events across distributed microservices using a message broker like RabbitMQ or Kafka
+    openfeign:
+      circuitbreaker:
+        enabled: true
   rabbitmq: #This configures Spring Boot to connect to a RabbitMQ broker running on localhost (port 5672) using the default guest/guest credentials.
     host: localhost
     port: 5672
@@ -66,7 +69,6 @@ management:
     health:
       probes:
         enabled: true  # Enables Kubernetes-style liveness & readiness probes.
-
   info:
     env:
       enabled: true
@@ -91,3 +93,16 @@ logging:
     com:
       eazybytes:
         accounts: DEBUG
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        #minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        slow-call-rate-threshold: 50
+        max-wait-duration-in-half-open-state:
+          seconds: 10
+        automatic-transition-from-open-to-half-open-enabled: true
+        permitted-number-of-calls-in-half-open-state: 3
