@@ -60,22 +60,7 @@ services:
         condition: service_healthy
     extends:
       file: common-config.yml
-      service: microservices-configserver-config
-
-  configserver:
-    image: "piyushrawat147/configserver:v6"
-    container_name: configserver
-    ports:
-      - "8071:8071"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
-    healthcheck:
-      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit" #Calls the Spring Boot Actuator health endpoint.
-      start_interval: 10s
-      timeout: 5s
-      interval: 10s
-      retries: 10
-    extends:
-      file: common-config.yml
-      service: microservices-base-config
+      service: microservices-eureka-config
 
   eurekaserver:
     image: "piyushrawat147/eurekaserver:v6"
@@ -96,6 +81,21 @@ services:
       service: microservices-configserver-config
     environment:
       SPRING_APPLICATION_NAME: "eurekaserver"
+
+  configserver:
+    image: "piyushrawat147/configserver:v6"
+    container_name: configserver
+    ports:
+      - "8071:8071"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit" #Calls the Spring Boot Actuator health endpoint.
+      start_interval: 10s
+      timeout: 5s
+      interval: 10s
+      retries: 10
+    extends:
+      file: common-config.yml
+      service: microservices-base-config
 
   accounts:
     image: "piyushrawat147/accounts:v6"
