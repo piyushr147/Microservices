@@ -80,7 +80,7 @@
 						<entrypoint>
 							<shell>bash</shell>
 							<option>-c</option>
-							<arg>apt-get update &amp;&amp; apt-get install -y curl &amp;&amp; java -jar configserver-0.0.1-SNAPSHOT.jar</arg>
+							<arg>apt-get update &amp;&amp; apt-get install -y curl &amp;&amp; java -jar eurekaserver-0.0.1-SNAPSHOT.jar</arg>
 						</entrypoint>
 					</container>
 				</configuration>
