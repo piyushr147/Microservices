@@ -14,7 +14,8 @@ import reactor.core.publisher.Mono;
 @Order(1)
 @Component
 public class RequestTraceFilter implements GlobalFilter {
-
+    //As the name suggest every request directed towards our edge server will get filtered this global filter
+    //To implement route specific filter we need to implement Gateway filter.
     private static final Logger logger = LoggerFactory.getLogger(RequestTraceFilter.class);
 
     @Autowired
@@ -35,11 +36,7 @@ public class RequestTraceFilter implements GlobalFilter {
     }
 
     private boolean isCorrelationIdPresent(HttpHeaders requestHeaders) {
-        if (filterUtility.getCorrelationId(requestHeaders) != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return filterUtility.getCorrelationId(requestHeaders) != null;
     }
 
     private String generateCorrelationId() {
