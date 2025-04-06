@@ -244,6 +244,7 @@ public class CardsController {
     )
     @GetMapping("/contact-info")
     public ResponseEntity<CardsContactInfoDto> getConfigurationProperties() {
+        logger.debug("calling getConfigurationProperties of cards controller");
         return new ResponseEntity<>(cardsContactInfoDto, HttpStatus.OK);
     }
 }
