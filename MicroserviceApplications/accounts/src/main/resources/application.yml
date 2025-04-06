@@ -106,3 +106,15 @@ resilience4j:
           seconds: 10
         automatic-transition-from-open-to-half-open-enabled: true
         permitted-number-of-calls-in-half-open-state: 3
+  retry:
+    configs:
+      default:
+        max-attempts: 2
+        wait-duration:
+          nanos: 100
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        #ignore-exceptions:
+        #  - java.lang.NullPointerException
+        #retry-exceptions:
+        #  - java.util.concurrent.TimeoutException
