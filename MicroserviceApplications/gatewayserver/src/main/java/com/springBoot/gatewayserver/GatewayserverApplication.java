@@ -30,6 +30,10 @@ public class GatewayserverApplication {
 						.path("/banking/cards/**")
 						.filters(filter ->
 								filter.rewritePath("banking/cards/?(?<remaining>.*)","/${remaining}")
+										.retry(retryConfig -> retryConfig
+												.setMethods(HttpMethod.GET)
+												.setRetries(3)
+												.setBackoff(Duration.ofMillis(100),Duration.ofMillis(1000),2,true))
 						)
 						.uri("lb://CARDS")
 				)
