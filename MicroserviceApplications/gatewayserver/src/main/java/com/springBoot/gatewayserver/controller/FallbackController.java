@@ -10,6 +10,6 @@ public class FallbackController {
 
     @GetMapping("/contactSupport")
     public Mono<String> fallbackResponse(){
-        return Mono.just("Error in api response");
+        return Mono.just("Error in api response kindly reach out the support team send a sms to 100 or mail to abc@gmail.com");
     }
 }
