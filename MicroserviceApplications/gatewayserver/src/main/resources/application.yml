@@ -53,7 +53,7 @@ resilience4j:
         minimum-number-of-calls: 5
         failure-rate-threshold: 50
         wait-duration-in-open-state:
-          seconds: 15
+          seconds: 10
         #The circuit automatically transitions to HALF-OPEN after waitDurationInOpenState expires — but only when a new request arrives.
         #Important: The circuit breaker is lazy — it doesn't proactively ping the downstream service. It just waits.
         permitted-number-of-calls-in-half-open-state: 3
