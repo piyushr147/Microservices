@@ -98,23 +98,37 @@ resilience4j:
   circuitbreaker:
     configs:
       default:
-        sliding-window-size: 10
-        #minimum-number-of-calls: 5
-        failure-rate-threshold: 50
-        slow-call-rate-threshold: 50
+        sliding-window-size: 10                     # Number of calls in the window (successful + failed) to evaluate health
+        minimum-number-of-calls: 5                 # Minimum calls required before the circuit breaker evaluates failure rate
+        failure-rate-threshold: 50                 # % of failed calls to open the circuit (here: 50% of 10 = 5 failures)
+        slow-call-rate-threshold: 50               # % of slow calls that will count as "failed"
         max-wait-duration-in-half-open-state:
-          seconds: 10
-        automatic-transition-from-open-to-half-open-enabled: true
-        permitted-number-of-calls-in-half-open-state: 3
+          seconds: 10                              # Max time the circuit waits in half-open state before decision
+        automatic-transition-from-open-to-half-open-enabled: true  # Auto move to half-open after wait period (no manual trigger)
+        permitted-number-of-calls-in-half-open-state: 3  # Number of test calls allowed during half-open to test if it's healthy
+
   retry:
     configs:
       default:
-        max-attempts: 2
+        max-attempts: 2                            # Total attempts = 1 initial + 1 retry
         wait-duration:
-          nanos: 100
-        enable-exponential-backoff: true
-        exponential-backoff-multiplier: 2
-        #ignore-exceptions:
-        #  - java.lang.NullPointerException
-        #retry-exceptions:
-        #  - java.util.concurrent.TimeoutException
+          nanos: 100                               # Wait time before retrying (very small here: 100 nanoseconds)
+        enable-exponential-backoff: true           # Increases wait time exponentially between retries
+        exponential-backoff-multiplier: 2          # Multiplier for exponential backoff (e.g., 100ns, 200ns)
+        ignore-exceptions:                         # These exceptions will NOT trigger a retry
+          - java.lang.NullPointerException
+        retry-exceptions:                          # These will trigger a retry
+          - java.util.concurrent.TimeoutException
+
+  ratelimiter:
+      configs:
+        default:
+          timeout-duration:
+            seconds: 0          # How long to wait for a permit before failing the request
+          limit-for-period: 1   # Max number of calls allowed in one refresh period(10secs here)
+          limit-refresh-period:
+            seconds: 10         # Time interval to reset the allowed number of calls.
+      instances:
+        getJavaVersion:
+          base-config: default
+
