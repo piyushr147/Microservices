@@ -19,6 +19,12 @@ spring:
         # ⏱️ Maximum time (in milliseconds) to establish a TCP connection to a service, this is global for every service.
         response-timeout: 2s   # = 2 seconds
         # ⌛ Maximum time to wait for the full response after the connection is established from the service.
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      connect-timeout: 3s
+      timeout: 2s
 
 management:
   endpoints:
