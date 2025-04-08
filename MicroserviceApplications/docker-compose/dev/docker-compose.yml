@@ -46,8 +46,22 @@ services:
       file: common-config.yml
       service: network-deploy-config
 
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"  # Map host port 6379 to container port 8071 (used by Spring Boot applications to fetch configurations)
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    extends:
+      file: common-config.yml
+      service: network-deploy-config
+
   gatewayserver:
-    image: "piyushrawat147/gatewayserver:v6"
+    image: "piyushrawat147/gatewayserver:v7"
     container_name: gatewayserver
     ports:
       - "8072:8072"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
@@ -58,12 +72,20 @@ services:
         condition: service_healthy
       loans:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservices-eureka-config
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
+      SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_TIMEOUT: 1s
 
   eurekaserver:
-    image: "piyushrawat147/eurekaserver:v6"
+    image: "piyushrawat147/eurekaserver:v7"
     container_name: eurekaserver
     ports:
       - "8070:8070"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
@@ -83,7 +105,7 @@ services:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
   configserver:
-    image: "piyushrawat147/configserver:v6"
+    image: "piyushrawat147/configserver:v7"
     container_name: configserver
     ports:
       - "8071:8071"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
@@ -98,7 +120,7 @@ services:
       service: microservices-base-config
 
   accounts:
-    image: "piyushrawat147/accounts:v6"
+    image: "piyushrawat147/accounts:v7"
     container_name: accounts-ms
     ports:
       - "8080:8080"  # Map host port 8080 to container port 8080 (used by Spring Boot applications to fetch configurations)
@@ -123,7 +145,7 @@ services:
       service: microservices-eureka-config
 
   cards:
-    image: "piyushrawat147/cards:v6"
+    image: "piyushrawat147/cards:v7"
     container_name: cards-ms
     ports:
       - "8081:8081"  # Map host port 8081 to container port 8081 (used by Spring Boot applications to fetch configurations)
@@ -148,7 +170,7 @@ services:
       service: microservices-eureka-config
 
   loans:
-    image: "piyushrawat147/loans:v6"
+    image: "piyushrawat147/loans:v7"
     container_name: loans-ms
     ports:
       - "8082:8082"  # Map host port 8082 to container port 8082 (used by Spring Boot applications to fetch configurations)
