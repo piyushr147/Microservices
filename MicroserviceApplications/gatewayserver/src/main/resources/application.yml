@@ -19,6 +19,12 @@ spring:
         # ⏱️ Maximum time (in milliseconds) to establish a TCP connection to a service, this is global for every service.
         response-timeout: 2s   # = 2 seconds
         # ⌛ Maximum time to wait for the full response after the connection is established from the service.
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # 🔐 The URL of your Keycloak realm's issuer. Spring will use this to auto-discover public keys, token format, validate tokens .
+          issuer-uri: "http://localhost:7080/realms/master"
   data:
     redis:
       host: localhost
