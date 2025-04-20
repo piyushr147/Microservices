@@ -35,6 +35,8 @@ spring:
     openfeign:
       circuitbreaker:
         enabled: true
+    function:
+      definition: updateCommunication
     stream:
       bindings:
         default-out-0: #This is our binding kind of an contract how routing will happen
