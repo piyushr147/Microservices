@@ -35,6 +35,13 @@ spring:
     openfeign:
       circuitbreaker:
         enabled: true
+    stream:
+      bindings:
+        default-out-0: #This is our binding kind of an contract how routing will happen
+          destination: send-communication #This is an exchange which routes to queues inside it based on the binding.
+        updateCommunication-in-0:
+          destination: communication-sent
+          group: ${spring.application.name}
   rabbitmq: #This configures Spring Boot to connect to a RabbitMQ broker running on localhost (port 5672) using the default guest/guest credentials.
     host: localhost
     port: 5672
