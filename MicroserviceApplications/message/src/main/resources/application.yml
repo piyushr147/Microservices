@@ -1,0 +1,22 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: "message"
+  cloud:
+    function:
+      definition: email|sms
+    stream:
+      bindings:
+        emailsms-in-0:
+          destination: send-communication #This is the exchange from where this binding will listen from
+          group: ${spring.application.name} #exchange->sendCommunication.message is the queue name
+        emailsms-out-0:
+          destination: communication-sent #This is the exchange from where this binding will send message to
+  rabbitmq:
+    host: localhost
+    port: 5672
+    stream:
+      username: guest
+      password: guest
