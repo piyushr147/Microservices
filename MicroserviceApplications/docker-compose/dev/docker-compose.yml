@@ -29,6 +29,27 @@ services:
   #   extends:
   #     file: common-config.yml
   #     service: microservices-db-config
+  kafka:
+    image: docker.io/bitnami/kafka:3.9
+    ports:
+      - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    extends:
+      file: common-config.yml
+      service: network-deploy-config
+
   keycloak:
     image: quay.io/keycloak/keycloak:26.2.0
     container_name: keycloak
@@ -73,7 +94,7 @@ services:
       service: network-deploy-config
 
   gatewayserver:
-    image: "piyushrawat147/gatewayserver:v9"
+    image: "piyushrawat147/gatewayserver:v10"
     container_name: gatewayserver
     ports:
       - "8072:8072"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
@@ -98,7 +119,7 @@ services:
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER-URI: "http://keycloak:8080/realms/master"
 
   eurekaserver:
-    image: "piyushrawat147/eurekaserver:v9"
+    image: "piyushrawat147/eurekaserver:v10"
     container_name: eurekaserver
     ports:
       - "8070:8070"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
@@ -118,7 +139,7 @@ services:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
   configserver:
-    image: "piyushrawat147/configserver:v9"
+    image: "piyushrawat147/configserver:v10"
     container_name: configserver
     ports:
       - "8071:8071"  # Map host port 8071 to container port 8071 (used by Spring Boot applications to fetch configurations)
@@ -133,7 +154,7 @@ services:
       service: microservices-base-config
 
   accounts:
-    image: "piyushrawat147/accounts:v9"
+    image: "piyushrawat147/accounts:v10"
     container_name: accounts-ms
     #commented port mapping to make it unaccessible from localhost, only available through docker container
     #ports:
@@ -147,19 +168,21 @@ services:
     environment:
       SPRING_APPLICATION_NAME: "accounts"
       #SPRING_DATASOURCE_URL: jdbc:mysql://accountsdb:3306/dbaccounts
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: "kafka:9092"
+      SPRING_CLOUD_STREAM_DEFAULT_BINDER: kafka
     depends_on:
       configserver:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
-      #accountsdb:
+        #accountsdb:
         #condition: service_healthy
     extends:
       file: common-config.yml
       service: microservices-eureka-config
 
   cards:
-    image: "piyushrawat147/cards:v9"
+    image: "piyushrawat147/cards:v10"
     container_name: cards-ms
     #commented port mapping to make it unaccessible from localhost, only available through docker container
     #ports:
@@ -178,14 +201,14 @@ services:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
-      #cardsdb:
+        #cardsdb:
         #condition: service_healthy
     extends:
       file: common-config.yml
       service: microservices-eureka-config
 
   loans:
-    image: "piyushrawat147/loans:v9"
+    image: "piyushrawat147/loans:v10"
     container_name: loans-ms
     #commented port mapping to make it unaccessible from localhost, only available through docker container
     #ports:
@@ -204,11 +227,24 @@ services:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
-      #loansdb:
+        #loansdb:
         #condition: service_healthy
     extends:
       file: common-config.yml
       service: microservices-eureka-config
+
+  message:
+    image: "piyushrawat147/message:v10"
+    container_name: "message-ms"
+    environment:
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: "kafka:9092"
+    extends:
+      file: common-config.yml
+      service: network-deploy-config
+
+volumes:
+  kafka_data:
+    driver: local
 
 networks:
   piyushrawat147:
