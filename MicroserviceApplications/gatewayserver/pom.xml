@@ -100,7 +100,7 @@
 				<version>3.4.2</version>
 				<configuration>
 					<to>
-						<image>piyushrawat147/${project.artifactId}:v9</image>
+						<image>piyushrawat147/${project.artifactId}:v10</image>
 					</to>
 					<allowInsecureRegistries>true</allowInsecureRegistries>
 				</configuration>
