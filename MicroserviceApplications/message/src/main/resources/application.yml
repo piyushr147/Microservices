@@ -6,14 +6,25 @@ spring:
     name: "message"
   cloud:
     function:
+      # Function chaining: message flows from `email` function to `sms` function
       definition: email|sms
     stream:
       bindings:
         emailsms-in-0:
-          destination: send-communication #This is the exchange from where this binding will listen from
-          group: ${spring.application.name} #exchange->sendCommunication.message is the queue name
+          # Kafka topic to receive from (kafka)
+          # Queue (exchange) from which to receive messages (rabbitmq)
+          destination: send-communication
+          #Consumer group name = "message", used for load balancing and offset tracking (kafka)
+          # Consumer group = "message", helps RabbitMQ set up dedicated queue per group (rabbitmq)
+          group: ${spring.application.name}
         emailsms-out-0:
-          destination: communication-sent #This is the exchange from where this binding will send message to
+          #Outgoing messages will be sent to this Kafka topic (kafka)
+          # Queue (exchange) to which the output will be sent (rabbitmq)
+          destination: communication-sent
+      kafka:
+        binder:
+          #Kafka broker address; the app connects to this to produce and consume messages
+          brokers: "localhost:9092"
   rabbitmq:
     host: localhost
     port: 5672

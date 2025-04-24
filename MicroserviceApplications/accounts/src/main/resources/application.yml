@@ -36,19 +36,36 @@ spring:
       circuitbreaker:
         enabled: true
     function:
+      #This tells Spring Cloud Function to use a bean named updateCommunication, which should be a Function, Consumer, or Supplier.
       definition: updateCommunication
     stream:
       bindings:
-        default-out-0: #This is our binding kind of an contract how routing will happen
-          destination: send-communication #This is an exchange which routes to queues inside it based on the binding.
+        default-out-0:
+          #Outgoing messages will be sent to this Kafka topic (kafka)
+          # Queue (exchange) to which the output will be sent (rabbitmq)
+          destination: send-communication
         updateCommunication-in-0:
+          # Kafka topic to receive from (kafka)
+          # Queue (exchange) from which to receive messages (rabbitmq)
           destination: communication-sent
+          #Consumer group name = "message", used for load balancing and offset tracking (kafka)
+          # Consumer group = "message", helps RabbitMQ set up dedicated queue per group (rabbitmq)
           group: ${spring.application.name}
-  rabbitmq: #This configures Spring Boot to connect to a RabbitMQ broker running on localhost (port 5672) using the default guest/guest credentials.
+      kafka:
+        binder:
+          #Kafka broker address; the app connects to this to produce and consume messages
+          brokers: "localhost:9092"
+      # Set Kafka as the default binder for stream bindings
+      # This is because we are using Kafka for event-driven communication between microservices
+      # RabbitMQ is used only for Spring Cloud Bus refresh events, not for stream bindings.
+      default-binder: kafka
+  #This configures Spring Boot to connect to a RabbitMQ broker running on localhost (port 5672) using the default guest/guest credentials.
+  rabbitmq:
     host: localhost
     port: 5672
     username: guest
     password: guest
+
 
 build:
   version: "1.0"
