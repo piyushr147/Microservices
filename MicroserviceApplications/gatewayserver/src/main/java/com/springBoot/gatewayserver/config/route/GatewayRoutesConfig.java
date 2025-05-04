@@ -20,7 +20,7 @@ public class GatewayRoutesConfig {
                 .route(p -> p
                         .path("/banking/accounts/**")
                         .filters(filter ->
-                                filter.rewritePath("banking/accounts/?(?<remaining>.*)","/${remaining}")
+                                filter.rewritePath("/banking/accounts/?(?<remaining>.*)","/${remaining}")
                                         .circuitBreaker(config -> config.setName("accountsCircuitBreaker")
                                                 .setFallbackUri("forward:/contactSupport")
                                         )
@@ -30,7 +30,7 @@ public class GatewayRoutesConfig {
                 .route(p -> p
                         .path("/banking/cards/**")
                         .filters(filter ->
-                                filter.rewritePath("banking/cards/?(?<remaining>.*)","/${remaining}")
+                                filter.rewritePath("/banking/cards/?(?<remaining>.*)","/${remaining}")
                                         .retry(retryConfig -> retryConfig
                                                 .setMethods(HttpMethod.GET)
                                                 .setRetries(3)
@@ -41,7 +41,7 @@ public class GatewayRoutesConfig {
                 .route(p -> p
                         .path("/banking/loans/**")
                         .filters(filter ->
-                                filter.rewritePath("banking/loans/?(?<remaining>.*)","/${remaining}")
+                                filter.rewritePath("/banking/loans/?(?<remaining>.*)","/${remaining}")
                                         .requestRateLimiter(config -> config
                                                 .setRateLimiter(createRedisRateLimiter())
                                                 .setKeyResolver(createKeyResolver()))

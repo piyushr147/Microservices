@@ -54,7 +54,7 @@ logging:
   level:
     com:
     springBoot:
-      gatewayserver: DEBUG
+      gatewayserver: TRACE
 
 resilience4j:
   circuitbreaker:
