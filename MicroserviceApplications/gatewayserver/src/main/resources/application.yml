@@ -53,8 +53,8 @@ info:
 logging:
   level:
     com:
-    springBoot:
-      gatewayserver: TRACE
+      springBoot:
+        gatewayserver: TRACE
 
 resilience4j:
   circuitbreaker:
