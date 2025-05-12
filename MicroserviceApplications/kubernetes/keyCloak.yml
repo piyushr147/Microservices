@@ -1,0 +1,62 @@
+# --------------------------------------------
+# Keycloak Deployment
+# --------------------------------------------
+apiVersion: apps/v1                         # API version for Deployments
+kind: Deployment                            # Declares a Deployment object
+metadata:
+  name: keycloak                            # Name of the deployment
+  labels:
+    app: keycloak                           # Label to identify this deployment (used by Service)
+
+spec:
+  replicas: 1                               # Number of pod replicas (just 1 for dev/test)
+  selector:
+    matchLabels:
+      app: keycloak                         # Ties this Deployment to pods with this label
+  template:                                 # Pod template
+    metadata:
+      labels:
+        app: keycloak                       # Label assigned to the created pods
+    spec:
+      containers:
+        - name: keycloak                    # Name of the container in the pod
+          image: quay.io/keycloak/keycloak:26.0.7   # Keycloak image (v26.0.7 from Quay.io)
+          args: ["start-dev"]               # Run Keycloak in development mode (embedded H2 DB)
+          env:                              # Environment variables passed to the container
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                configMapKeyRef:            # Load from ConfigMap (externalized config)
+                  name: piyushrawat-configmap  # ConfigMap name
+                  key: KEYCLOAK_ADMIN       # Key to use (e.g., "admin")
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                configMapKeyRef:            # Load password from ConfigMap
+                  name: piyushrawat-configmap
+                  key: KEYCLOAK_ADMIN_PASSWORD
+
+          ports:
+            - name: http
+              containerPort: 8080           # Internal container port that Keycloak listens on
+---
+
+# --------------------------------------------
+# Keycloak Service
+# --------------------------------------------
+apiVersion: v1                              # Core API version for services
+kind: Service                               # Declares a Service to expose the app
+metadata:
+  name: keycloak                            # Service name (used for DNS and discovery)
+  labels:
+    app: keycloak                           # Label for grouping and selection
+
+spec:
+  selector:
+    app: keycloak                           # Targets pods with this label
+  type: LoadBalancer                        # Exposes the service externally (cloud provider)
+  ports:
+    - name: http
+      port: 7080                            # Port exposed to the outside world
+      targetPort: 8080                      # Internal pod port to route traffic to (containerPort)
+      #This means when someone accesses http://<EXTERNAL-IP>:7080, they're routed to Keycloak.
+
+

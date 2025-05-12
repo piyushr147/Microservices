@@ -1,0 +1,27 @@
+dependencies:
+- name: piyushrawat147-common
+  repository: file://../../piyushrawat147-common
+  version: 0.1.0
+- name: configserver
+  repository: file://../../piyushrawat147-services/configserver
+  version: 0.1.0
+- name: eurekaserver
+  repository: file://../../piyushrawat147-services/eurekaserver
+  version: 0.1.0
+- name: accounts
+  repository: file://../../piyushrawat147-services/accounts
+  version: 0.1.0
+- name: cards
+  repository: file://../../piyushrawat147-services/cards
+  version: 0.1.0
+- name: loans
+  repository: file://../../piyushrawat147-services/loans
+  version: 0.1.0
+- name: gatewayserver
+  repository: file://../../piyushrawat147-services/gatewayserver
+  version: 0.1.0
+- name: message
+  repository: file://../../piyushrawat147-services/message
+  version: 0.1.0
+digest: sha256:98c5fb341503240c185d686929c65d8ea78a99f6ac57deb203017418891e1600
+generated: "2025-05-03T14:08:42.1276873+05:30"

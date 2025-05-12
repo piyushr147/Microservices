@@ -1,0 +1,28 @@
+apiVersion: v1                      # API version for ConfigMap
+kind: ConfigMap                     # You're creating a ConfigMap resource
+metadata:
+  name: piyushrawat-configmap       # The name of this ConfigMap (used when mounting/injecting)
+
+data:                               # Key-value pairs of config data
+  SPRING_PROFILES_ACTIVE: "prod"    # Tells Spring to use the "prod" profile (e.g., application-prod.yml)
+
+  SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+  # Tells Spring Boot where to fetch config from (Config Server URL)
+
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eurekaserver:8070/eureka/"
+  # Sets the Eureka client to register with the Eureka server at this address
+
+  CONFIGSERVER_APPLICATION_NAME: "configserver"
+  EUREKA_APPLICATION_NAME: "eurekaserver"
+  ACCOUNTS_APPLICATION_NAME: "accounts"
+  LOANS_APPLICATION_NAME: "loans"
+  CARDS_APPLICATION_NAME: "cards"
+  GATEWAY_APPLICATION_NAME: "gatewayserver"
+  # These define application names for service discovery — each microservice can use these to locate others
+
+  KEYCLOAK_ADMIN: "admin"
+  KEYCLOAK_ADMIN_PASSWORD: "admin"
+  # Admin credentials for bootstrapping Keycloak
+
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://keycloak:7080/realms/master/protocol/openid-connect/certs"
+  # URI for your app to get Keycloak's public keys (JWT validation for OAuth2 resource servers)

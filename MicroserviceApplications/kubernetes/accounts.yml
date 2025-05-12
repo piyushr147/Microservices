@@ -1,0 +1,67 @@
+# --------------------------------------------
+# Deployment: accounts microservice
+# --------------------------------------------
+apiVersion: apps/v1                         # API version for Deployments
+kind: Deployment                            # Declares a Deployment object
+metadata:
+  name: accounts-deployment                 # Name of the deployment
+  labels:
+    app: accounts                           # Label to identify this deployment (used by Service)
+
+spec:
+  replicas: 1                               # One pod (container) will be created
+  selector:
+    matchLabels:
+      app: accounts                         # Ensures this Deployment matches the right Pods
+  template:                                 # Template for creating Pods
+    metadata:
+      labels:
+        app: accounts                       # Label applied to created Pods
+    spec:
+      containers:
+        - name: accounts                    # Name of the container
+          image: piyushrawat147/accounts:v9 # Docker image from your registry (v9 tag)
+          ports:
+            - containerPort: 8080           # Container listens on port 8080 (default for Spring Boot)
+
+          env:                              # Environment variables (externalized config)
+            - name: SPRING_APPLICATION_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: piyushrawat-configmap        # Reference to the config map
+                  key: ACCOUNTS_APPLICATION_NAME     # Key inside the config map
+
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: piyushrawat-configmap
+                  key: SPRING_PROFILES_ACTIVE
+
+            - name: SPRING_CONFIG_IMPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: piyushrawat-configmap
+                  key: SPRING_CONFIG_IMPORT          # URL of the Spring Config Server
+
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              valueFrom:
+                configMapKeyRef:
+                  name: piyushrawat-configmap
+                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE  # Eureka registration URL
+---
+# --------------------------------------------
+# Service: exposes accounts service
+# --------------------------------------------
+apiVersion: v1                              # API version for Service
+kind: Service                               # Declares a Service object
+metadata:
+  name: accounts                            # Service name (DNS: accounts.default.svc.cluster.local)
+spec:
+  selector:
+    app: accounts                           # Select pods with this label
+  type: LoadBalancer                        # Exposes the service via external load balancer
+  ports:
+    - protocol: TCP
+      port: 8080                            # External port for clients to access
+      targetPort: 8080                      # Internal container port
+      #This means when someone accesses http://<EXTERNAL-IP>:8080, they're routed to accounts.

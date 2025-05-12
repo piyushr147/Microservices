@@ -1,0 +1,6 @@
+dependencies:
+- name: piyushrawat147-common
+  repository: file://../../piyushrawat147-common
+  version: 0.1.0
+digest: sha256:ab359a3ace15350ab9687a1259908dba1ecd00f45292e7d32738c45fe079b726
+generated: "2025-05-03T12:21:20.6510437+05:30"

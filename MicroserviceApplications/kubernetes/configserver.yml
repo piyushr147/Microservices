@@ -1,0 +1,39 @@
+# ---------------- Deployment ----------------
+apiVersion: apps/v1                     # API version for Deployment
+kind: Deployment                        # This defines a Deployment (manages pods)
+metadata:
+  name: configserver-deployment         # Name of the Deployment
+  labels:
+    app: configserver                   # Label to identify this app (used for matching)
+
+spec:
+  replicas: 1                           # Only one pod will be created (for now)
+  selector:
+    matchLabels:
+      app: configserver                 # Match pods that have this label
+  template:                             # Pod template (defines how the pods will look)
+    metadata:
+      labels:
+        app: configserver               # Label applied to the pod (must match selector above)
+    spec:
+      containers:
+        - name: configserver            # Container name inside the pod
+          image: piyushrawat147/configserver:v9  # Docker image to run (Spring Config Server)
+          ports:
+            - containerPort: 8071       # Port the app listens on inside the container
+
+---
+# ---------------- Service ----------------
+apiVersion: v1                          # Core API group for basic resources
+kind: Service                           # This defines a Service (network access to the pod)
+metadata:
+  name: configserver                    # Name of the Service (used for DNS: configserver.default.svc.cluster.local)
+
+spec:
+  selector:
+    app: configserver                   # This service targets pods with this label
+  type: LoadBalancer                    # Exposes the service externally via cloud load balancer
+  ports:
+    - protocol: TCP                     # Protocol used (TCP for HTTP traffic)
+      port: 8071                        # Port the service is exposed on (external access)
+      targetPort: 8071                  # Port inside the pod/container that receives traffic
